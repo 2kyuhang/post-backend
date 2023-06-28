@@ -1,8 +1,9 @@
-package com.sparta.blog.service;
+package com.sparta.blog.domain.post.service;
 
-import com.sparta.blog.dto.PostRequestDTO;
-import com.sparta.blog.entity.Post;
-import com.sparta.blog.repository.PostRepository;
+import com.sparta.blog.domain.post.dto.PostRequestDTO;
+import com.sparta.blog.domain.post.entity.Post;
+import com.sparta.blog.global.exception.PostNotFoundException;
+import com.sparta.blog.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,11 @@ public class PostService {
 
     public List<Post> getPostAll(){
         return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public Post getPost(Long id) {
+        return postRepository.findById(id).orElseThrow(
+                ()-> new PostNotFoundException(id)
+        );
     }
 }

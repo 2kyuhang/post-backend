@@ -1,6 +1,6 @@
-package com.sparta.blog.entity;
+package com.sparta.blog.domain.post.entity;
 
-import com.sparta.blog.dto.PostRequestDTO;
+import com.sparta.blog.domain.post.dto.PostRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

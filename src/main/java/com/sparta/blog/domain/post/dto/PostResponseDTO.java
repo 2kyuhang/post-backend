@@ -1,6 +1,6 @@
-package com.sparta.blog.dto;
+package com.sparta.blog.domain.post.dto;
 
-import com.sparta.blog.entity.Post;
+import com.sparta.blog.domain.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 

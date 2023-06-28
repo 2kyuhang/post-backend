@@ -1,9 +1,9 @@
-package com.sparta.blog.controller;
+package com.sparta.blog.domain.post.controller;
 
-import com.sparta.blog.dto.PostRequestDTO;
-import com.sparta.blog.dto.PostResponseDTO;
-import com.sparta.blog.entity.Post;
-import com.sparta.blog.service.PostService;
+import com.sparta.blog.domain.post.dto.PostRequestDTO;
+import com.sparta.blog.domain.post.dto.PostResponseDTO;
+import com.sparta.blog.domain.post.entity.Post;
+import com.sparta.blog.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +30,11 @@ public class PostController {
     }
 
     @GetMapping("/post/{id}")
-    public PostResponseDTO getPostById(){
-        return null;
+    public PostResponseDTO getPost(@PathVariable Long id){
+        System.out.println(id);
+        Post newPost = postService.getPost(id);
+        System.out.println(newPost);
+        return PostResponseDTO.postResponseOf(newPost);
     }
 
     @PutMapping("/post/{id}")
