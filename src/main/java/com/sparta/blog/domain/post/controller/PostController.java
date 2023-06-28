@@ -2,6 +2,7 @@ package com.sparta.blog.domain.post.controller;
 
 import com.sparta.blog.domain.post.dto.PostRequestDTO;
 import com.sparta.blog.domain.post.dto.PostResponseDTO;
+import com.sparta.blog.domain.post.dto.PostTaskResponseDTO;
 import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,12 @@ public class PostController {
     }
 
     @DeleteMapping("/post/{id}")
-    public PostResponseDTO deletePost(@RequestBody String password){
-        return null;
+    public PostTaskResponseDTO deletePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id){
+        postService.deletePost(id, postRequestDTO.getPassword());
+
+        return PostTaskResponseDTO.builder()
+                .Task("Delete")
+                .msg("성공")
+                .build();
     }
 }

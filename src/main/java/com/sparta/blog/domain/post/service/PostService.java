@@ -40,20 +40,30 @@ public class PostService {
                 ()-> new PostNotFoundException(id)
         );
 
-        checkPassword(post, postRequestDTO);
+        checkPassword(id, postRequestDTO.getPassword(), post.getPassword());
         post.changeOf(postRequestDTO);
 
         return post;
     }
 
-    public void checkPassword(Post post, PostRequestDTO postRequestDTO){
-        String requestPassword = postRequestDTO.getPassword();
-        String dbPassword = post.getPassword();
-
-        if((requestPassword == null && dbPassword == null) || dbPassword.equals(requestPassword)) {
-            return;
+    public void checkPassword(Long id, String requestPassword, String dbPassword){
+        System.out.println("re" + requestPassword);
+        System.out.println("pw" + dbPassword);
+        if(requestPassword == null){
+            if(dbPassword != null) throw new PostUnAuthException(id);
+        } else if(dbPassword == null){
+            throw new PostUnAuthException(id);
         } else {
-            throw new PostUnAuthException(post.getId());
+            if(!requestPassword.equals(dbPassword)) throw new PostUnAuthException(id);
         }
+    }
+
+    public void deletePost(Long id, String password) {
+        Post post = postRepository.findById(id).orElseThrow(
+                ()-> new PostNotFoundException(id)
+        );
+
+        checkPassword(id, password, post.getPassword());
+        postRepository.delete(post);
     }
 }
