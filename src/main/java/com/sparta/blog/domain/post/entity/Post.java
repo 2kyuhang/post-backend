@@ -34,4 +34,11 @@ public class Post {
                 .password(postRequestDTO.getPassword())
                 .build();
     }
+
+    public void changeOf(PostRequestDTO postRequestDTO) {
+        this.title = postRequestDTO.getTitle();
+        this.content = postRequestDTO.getContent();
+        this.writer = postRequestDTO.getWriter();
+        this.password = postRequestDTO.getPassword();
+    }
 }

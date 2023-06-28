@@ -31,15 +31,15 @@ public class PostController {
 
     @GetMapping("/post/{id}")
     public PostResponseDTO getPost(@PathVariable Long id){
-        System.out.println(id);
-        Post newPost = postService.getPost(id);
-        System.out.println(newPost);
-        return PostResponseDTO.postResponseOf(newPost);
+        Post post = postService.getPost(id);
+
+        return PostResponseDTO.postResponseOf(post);
     }
 
     @PutMapping("/post/{id}")
-    public PostResponseDTO updatePost(@RequestBody PostRequestDTO postRequestDTO){
-        return null;
+    public PostResponseDTO updatePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id){
+        Post updatePost = postService.updatePost(id, postRequestDTO);
+        return PostResponseDTO.postResponseOf(updatePost);
     }
 
     @DeleteMapping("/post/{id}")
