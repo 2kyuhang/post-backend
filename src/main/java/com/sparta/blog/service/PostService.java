@@ -6,6 +6,8 @@ import com.sparta.blog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -15,5 +17,9 @@ public class PostService {
         Post newPost = Post.postOf(postRequestDTO);
 
         return postRepository.save(newPost);
+    }
+
+    public List<Post> getPostAll(){
+        return postRepository.findAllByOrderByCreatedAtDesc();
     }
 }

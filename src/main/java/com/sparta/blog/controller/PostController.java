@@ -17,7 +17,9 @@ public class PostController {
 
     @GetMapping("/post")
     public List<PostResponseDTO> getPostAll(){
-        return null;
+        List<Post> newPosts = postService.getPostAll();
+
+        return newPosts.stream().map(PostResponseDTO::postResponseOf).toList();
     }
 
     @PostMapping("/post")
