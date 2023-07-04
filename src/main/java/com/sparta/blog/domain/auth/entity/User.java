@@ -1,6 +1,5 @@
 package com.sparta.blog.domain.auth.entity;
 
-import com.sparta.blog.domain.auth.dto.AuthRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
@@ -27,10 +26,10 @@ public class User {
     @Column(updatable = false)
     LocalDateTime createdAt;
 
-    public static User of(AuthRequestDTO authRequestDTO){
+    public static User of(String username, String password){
         return User.builder()
-                .username(authRequestDTO.getUsername())
-                .password(authRequestDTO.getPassword())
+                .username(username)
+                .password(password)
                 .build();
     }
 }
