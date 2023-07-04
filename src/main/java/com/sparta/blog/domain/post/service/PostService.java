@@ -7,6 +7,7 @@ import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.repository.PostRepository;
 import com.sparta.blog.global.exception.PostNotFoundException;
 import com.sparta.blog.global.exception.PostUnAuthException;
+import com.sparta.blog.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class PostService {
 
     public Post writePost(String userName, PostRequestDTO postRequestDTO){
         User user = userRepository.findByUsername(userName)
-                .orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
+                .orElseThrow(() -> new UserNotFoundException(userName));
         Post newPost = Post.postOf(postRequestDTO, user);
 
         return postRepository.save(newPost);
@@ -40,33 +41,30 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(Long id, PostRequestDTO postRequestDTO) {
+    public Post updatePost(Long id, String userName, PostRequestDTO postRequestDTO) {
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new PostNotFoundException(id)
         );
 
-//        checkPassword(id, postRequestDTO.getPassword(), post.getPassword());
-        post.changeOf(postRequestDTO, null);
+        validateUser(post, userName);
+        post.changeOf(postRequestDTO);
 
         return post;
     }
 
-    public void checkPassword(Long id, String requestPassword, String dbPassword){
-        if(requestPassword == null){
-            if(dbPassword != null) throw new PostUnAuthException(id);
-        } else if(dbPassword == null){
-            throw new PostUnAuthException(id);
-        } else {
-            if(!requestPassword.equals(dbPassword)) throw new PostUnAuthException(id);
+    public void validateUser(Post post, String userName){
+        if(!post.getUser().getUsername().equals(userName)){
+            throw new PostUnAuthException(post.getId());
         }
     }
 
-    public void deletePost(Long id, String password) {
+    public void deletePost(Long id, String userName) {
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new PostNotFoundException(id)
         );
 
-        checkPassword(id, password, post.getPassword());
+        validateUser(post, userName);
+
         postRepository.delete(post);
     }
 }
