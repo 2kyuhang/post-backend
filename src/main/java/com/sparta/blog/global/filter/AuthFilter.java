@@ -2,6 +2,7 @@ package com.sparta.blog.global.filter;
 
 import com.sparta.blog.domain.auth.repository.UserRepository;
 import com.sparta.blog.global.jwt.JwtProvider;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,11 @@ public class AuthFilter implements Filter {
                 if(!jwtProvider.validateToken(token)){
                     throw new IllegalArgumentException("Token Error");
                 }
+
+                Claims userInfo = jwtProvider.getUserInfoFromToken(token);
+                String userName = userInfo.getSubject();
+
+                request.setAttribute("username", userName);
 
                 chain.doFilter(request, response);
             } else {

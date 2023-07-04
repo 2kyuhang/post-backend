@@ -24,8 +24,9 @@ public class PostController {
     }
 
     @PostMapping("/post")
-    public PostResponseDTO writePost(@RequestBody PostRequestDTO postRequestDTO){
-        Post newPost = postService.writePost(postRequestDTO);
+    public PostResponseDTO writePost(@RequestBody PostRequestDTO postRequestDTO, HttpServletRequest httpServletRequest){
+        String userName = (String) httpServletRequest.getAttribute("username");
+        Post newPost = postService.writePost(userName, postRequestDTO);
 
         return PostResponseDTO.postResponseOf(newPost);
     }
@@ -45,7 +46,7 @@ public class PostController {
 
     @DeleteMapping("/post/{id}")
     public PostTaskResponseDTO deletePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id){
-        postService.deletePost(id, postRequestDTO.getPassword());
+//        postService.deletePost(id, postRequestDTO.getPassword());
 
         return PostTaskResponseDTO.builder()
                 .Task("Delete")

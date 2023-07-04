@@ -36,7 +36,6 @@ public class Post {
                 .title(postRequestDTO.getTitle())
                 .content(postRequestDTO.getContent())
                 .user(user)
-                .password(postRequestDTO.getPassword())
                 .build();
     }
 
@@ -44,6 +43,5 @@ public class Post {
         this.title = postRequestDTO.getTitle();
         this.content = postRequestDTO.getContent();
         this.user = user;
-        this.password = postRequestDTO.getPassword();
     }
 }
