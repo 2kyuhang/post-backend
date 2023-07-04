@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @Slf4j
 public class CustomExceptionHandler {
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity handleNotFoundException(NotFoundException e) {
         log.error("NotFoundException",e);
@@ -20,4 +21,11 @@ public class CustomExceptionHandler {
         log.error("UnAuthException",e);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity handleUserException(UserException e) {
+        log.error("UserException",e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
 }
