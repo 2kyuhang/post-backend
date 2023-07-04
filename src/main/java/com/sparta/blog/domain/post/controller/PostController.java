@@ -25,7 +25,7 @@ public class PostController {
 
     @PostMapping("/post")
     public PostResponseDTO writePost(@RequestBody PostRequestDTO postRequestDTO, HttpServletRequest httpServletRequest){
-        String userName = (String) httpServletRequest.getAttribute("username");
+        String userName = getUserNameOf(httpServletRequest);
         Post newPost = postService.writePost(userName, postRequestDTO);
 
         return PostResponseDTO.postResponseOf(newPost);
@@ -39,18 +39,25 @@ public class PostController {
     }
 
     @PutMapping("/post/{id}")
-    public PostResponseDTO updatePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id){
-        Post updatePost = postService.updatePost(id, postRequestDTO);
+    public PostResponseDTO updatePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id, HttpServletRequest httpServletRequest){
+        String userName = getUserNameOf(httpServletRequest);
+        Post updatePost = postService.updatePost(id,userName, postRequestDTO);
+
         return PostResponseDTO.postResponseOf(updatePost);
     }
 
     @DeleteMapping("/post/{id}")
-    public PostTaskResponseDTO deletePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id){
-//        postService.deletePost(id, postRequestDTO.getPassword());
+    public PostTaskResponseDTO deletePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id, HttpServletRequest httpServletRequest){
+        String userName = getUserNameOf(httpServletRequest);
+        postService.deletePost(id, userName);
 
         return PostTaskResponseDTO.builder()
                 .Task("Delete")
                 .msg("성공")
                 .build();
+    }
+
+    private String getUserNameOf(HttpServletRequest httpServletRequest){
+        return (String) httpServletRequest.getAttribute("username");
     }
 }

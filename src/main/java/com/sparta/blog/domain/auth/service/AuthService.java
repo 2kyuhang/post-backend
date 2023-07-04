@@ -4,6 +4,7 @@ import com.sparta.blog.domain.auth.dto.AuthRequestDTO;
 import com.sparta.blog.domain.auth.entity.User;
 import com.sparta.blog.domain.auth.repository.UserRepository;
 import com.sparta.blog.global.exception.UserDuplicateException;
+import com.sparta.blog.global.exception.UserNotFoundException;
 import com.sparta.blog.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +29,7 @@ public class AuthService {
 
     public String login(AuthRequestDTO authRequestDTO) {
         User user = userRepository.findByUsername(authRequestDTO.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
+                .orElseThrow(() -> new UserNotFoundException(authRequestDTO.getUsername()));
 
         if(!passwordEncoder.matches(authRequestDTO.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");

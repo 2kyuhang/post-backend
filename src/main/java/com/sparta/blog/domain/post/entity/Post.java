@@ -39,9 +39,8 @@ public class Post {
                 .build();
     }
 
-    public void changeOf(PostRequestDTO postRequestDTO, User user) {
+    public void changeOf(PostRequestDTO postRequestDTO) {
         this.title = postRequestDTO.getTitle();
         this.content = postRequestDTO.getContent();
-        this.user = user;
     }
 }
