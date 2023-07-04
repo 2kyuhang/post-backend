@@ -19,8 +19,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public Post writePost(PostRequestDTO postRequestDTO){
-        User user = userRepository.findByUsername(postRequestDTO.getUsername())
+    public Post writePost(String userName, PostRequestDTO postRequestDTO){
+        User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
         Post newPost = Post.postOf(postRequestDTO, user);
 
@@ -45,15 +45,13 @@ public class PostService {
                 ()-> new PostNotFoundException(id)
         );
 
-        checkPassword(id, postRequestDTO.getPassword(), post.getPassword());
+//        checkPassword(id, postRequestDTO.getPassword(), post.getPassword());
         post.changeOf(postRequestDTO, null);
 
         return post;
     }
 
     public void checkPassword(Long id, String requestPassword, String dbPassword){
-        System.out.println("re" + requestPassword);
-        System.out.println("pw" + dbPassword);
         if(requestPassword == null){
             if(dbPassword != null) throw new PostUnAuthException(id);
         } else if(dbPassword == null){
