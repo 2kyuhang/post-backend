@@ -26,4 +26,17 @@ public class AuthController {
                 .msg("Success")
                 .build();
     }
+
+    @PostMapping("/auth/login")
+    public AuthResultDTO login(@RequestBody AuthRequestDTO authRequestDTO){
+        authService.login(authRequestDTO);
+        return AuthResultDTO
+                .builder()
+                .task("Login")
+                .msg("로그인 성공")
+                .build();
+    }
+
+
+
 }
