@@ -21,6 +21,12 @@ public class AuthService {
         userRepository.save(User.of(authRequestDTO));
     }
 
+    public void login(AuthRequestDTO authRequestDTO) {
+        User user = userRepository.findByUsername(authRequestDTO.getUsername()).orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
+        if(!user.getPassword().equals(authRequestDTO.getPassword())) throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
+
     private void validateUser(String userName, String password){
         if(!validateUsername(userName)) throw new IllegalArgumentException("유저이름 규칙이 맞지 않습니다.");
         if(!validatePassword(password)) throw new IllegalArgumentException("패스워드 규칙이 맞지 않습니다.");
@@ -38,5 +44,6 @@ public class AuthService {
     private boolean checkDupUserName(String userName){
         return userRepository.findByUsername(userName).isPresent();
     }
+
 
 }
