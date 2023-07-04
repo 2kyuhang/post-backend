@@ -25,8 +25,6 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String password;
-
     @CurrentTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
