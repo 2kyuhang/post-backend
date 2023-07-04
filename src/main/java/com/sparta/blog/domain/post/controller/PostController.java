@@ -5,6 +5,7 @@ import com.sparta.blog.domain.post.dto.PostResponseDTO;
 import com.sparta.blog.domain.post.dto.PostTaskResponseDTO;
 import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,6 @@ public class PostController {
     @GetMapping("/post")
     public List<PostResponseDTO> getPostAll(){
         List<Post> newPosts = postService.getPostAll();
-
         return newPosts.stream().map(PostResponseDTO::postResponseOf).toList();
     }
 
