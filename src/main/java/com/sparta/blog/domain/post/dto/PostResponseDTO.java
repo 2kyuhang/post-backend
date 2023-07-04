@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 @Builder
 public class PostResponseDTO {
     private final String title;
-    private final String writer;
+    private final String username;
     private final String content;
     private final LocalDateTime createdAt;
 
     public static PostResponseDTO postResponseOf(Post post){
        return PostResponseDTO.builder()
                .title(post.getTitle())
-               .writer(post.getWriter())
+               .username(post.getUser().getUsername())
                .content(post.getContent())
                .createdAt(post.getCreatedAt())
                .build();

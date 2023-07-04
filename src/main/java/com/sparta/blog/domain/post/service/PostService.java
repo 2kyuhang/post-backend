@@ -1,5 +1,7 @@
 package com.sparta.blog.domain.post.service;
 
+import com.sparta.blog.domain.auth.entity.User;
+import com.sparta.blog.domain.auth.repository.UserRepository;
 import com.sparta.blog.domain.post.dto.PostRequestDTO;
 import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.repository.PostRepository;
@@ -15,9 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     public Post writePost(PostRequestDTO postRequestDTO){
-        Post newPost = Post.postOf(postRequestDTO);
+        User user = userRepository.findByUsername(postRequestDTO.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
+        Post newPost = Post.postOf(postRequestDTO, user);
 
         return postRepository.save(newPost);
     }
@@ -41,7 +46,7 @@ public class PostService {
         );
 
         checkPassword(id, postRequestDTO.getPassword(), post.getPassword());
-        post.changeOf(postRequestDTO);
+        post.changeOf(postRequestDTO, null);
 
         return post;
     }

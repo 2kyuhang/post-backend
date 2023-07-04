@@ -1,5 +1,6 @@
 package com.sparta.blog.domain.post.entity;
 
+import com.sparta.blog.domain.auth.entity.User;
 import com.sparta.blog.domain.post.dto.PostRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,26 +20,30 @@ public class Post {
     private Long id;
     private String title;
     private String content;
-    private String writer;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String password;
 
     @CurrentTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public static Post postOf(PostRequestDTO postRequestDTO) {
+    public static Post postOf(PostRequestDTO postRequestDTO, User user) {
         return Post.builder()
                 .title(postRequestDTO.getTitle())
                 .content(postRequestDTO.getContent())
-                .writer(postRequestDTO.getWriter())
+                .user(user)
                 .password(postRequestDTO.getPassword())
                 .build();
     }
 
-    public void changeOf(PostRequestDTO postRequestDTO) {
+    public void changeOf(PostRequestDTO postRequestDTO, User user) {
         this.title = postRequestDTO.getTitle();
         this.content = postRequestDTO.getContent();
-        this.writer = postRequestDTO.getWriter();
+        this.user = user;
         this.password = postRequestDTO.getPassword();
     }
 }
