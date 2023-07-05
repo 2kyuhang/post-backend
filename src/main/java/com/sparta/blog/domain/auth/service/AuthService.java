@@ -54,11 +54,11 @@ public class AuthService {
     }
 
     private boolean validateUsername(String userName){
-        return userName.matches("[a-z0-9]+") && userName.length() >= 4 && userName.length() <= 10;
+        return userName.matches("[a-z0-9]{4,10}");
     }
 
     private boolean validatePassword(String password){
-        return password.matches("[a-zA-Z0-9]+") && password.length() >=8 && password.length() <=15;
+        return password.matches("[a-zA-Z0-9]{8,15}");
     }
 
     private boolean checkDupUserName(String userName){
