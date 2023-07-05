@@ -22,8 +22,6 @@ public class Post {
     private String content;
 
     @ManyToOne
-    @OneToOne
-    @OneToMany
     @JoinColumn(name = "user_id")
     private User user;
 
