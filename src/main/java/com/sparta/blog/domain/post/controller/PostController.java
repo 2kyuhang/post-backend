@@ -1,12 +1,12 @@
 package com.sparta.blog.domain.post.controller;
 
-import com.sparta.blog.domain.post.dto.PostRequestDTO;
-import com.sparta.blog.domain.post.dto.PostResponseDTO;
-import com.sparta.blog.domain.post.dto.PostTaskResponseDTO;
+import com.sparta.blog.domain.post.dto.*;
 import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +34,6 @@ public class PostController {
     @GetMapping("/post/{id}")
     public PostResponseDTO getPost(@PathVariable Long id){
         Post post = postService.getPost(id);
-
         return PostResponseDTO.postResponseOf(post);
     }
 
@@ -57,7 +56,27 @@ public class PostController {
                 .build();
     }
 
+    @PostMapping("/comment")
+    public CommentResponseDTO writeComment(@RequestBody CommentWriteRequestDTO commentRequestDTO, HttpServletRequest httpServletRequest){
+        String userName = getUserNameOf(httpServletRequest);
+        return postService.writeComment(userName, commentRequestDTO);
+    }
+
+    @PutMapping("/comment/{id}")
+    public CommentResponseDTO updateComment(@PathVariable Long id, @Valid @RequestBody CommentUpdateRespuestDTO commentUpdateRespuestDTO, HttpServletRequest httpServletRequest){
+        String userName = getUserNameOf(httpServletRequest);
+        return postService.updateComment(id, commentUpdateRespuestDTO, userName);
+    }
+
+    @DeleteMapping("/comment/{id}")
+    public PostCommentResultDTO deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
+        String userName = getUserNameOf(httpServletRequest);
+        return postService.deleteComment(id, userName);
+    }
+
+
     private String getUserNameOf(HttpServletRequest httpServletRequest){
         return (String) httpServletRequest.getAttribute("username");
     }
+
 }

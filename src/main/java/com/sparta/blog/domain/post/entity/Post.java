@@ -7,13 +7,14 @@ import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@ToString
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +25,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
 
     @CurrentTimestamp
     @Column(updatable = false)
