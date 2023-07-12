@@ -6,7 +6,6 @@ import com.sparta.blog.domain.post.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Comment;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +39,8 @@ public class PostController {
     @PutMapping("/post/{id}")
     public PostResponseDTO updatePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id, HttpServletRequest httpServletRequest){
         String userName = getUserNameOf(httpServletRequest);
-        Post updatePost = postService.updatePost(id,userName, postRequestDTO);
+        String userRole = getUserRoleOf(httpServletRequest);
+        Post updatePost = postService.updatePost(id, userName, userRole,  postRequestDTO);
 
         return PostResponseDTO.postResponseOf(updatePost);
     }
@@ -48,7 +48,8 @@ public class PostController {
     @DeleteMapping("/post/{id}")
     public PostTaskResponseDTO deletePost(@RequestBody PostRequestDTO postRequestDTO, @PathVariable Long id, HttpServletRequest httpServletRequest){
         String userName = getUserNameOf(httpServletRequest);
-        postService.deletePost(id, userName);
+        String userRole = getUserRoleOf(httpServletRequest);
+        postService.deletePost(id, userName, userRole);
 
         return PostTaskResponseDTO.builder()
                 .Task("Delete")
@@ -65,18 +66,24 @@ public class PostController {
     @PutMapping("/comment/{id}")
     public CommentResponseDTO updateComment(@PathVariable Long id, @Valid @RequestBody CommentUpdateRespuestDTO commentUpdateRespuestDTO, HttpServletRequest httpServletRequest){
         String userName = getUserNameOf(httpServletRequest);
-        return postService.updateComment(id, commentUpdateRespuestDTO, userName);
+        String userRole = getUserRoleOf(httpServletRequest);
+        return postService.updateComment(id, commentUpdateRespuestDTO, userName, userRole);
     }
 
     @DeleteMapping("/comment/{id}")
     public PostCommentResultDTO deleteComment(@PathVariable Long id, HttpServletRequest httpServletRequest){
         String userName = getUserNameOf(httpServletRequest);
-        return postService.deleteComment(id, userName);
+        String userRole = getUserRoleOf(httpServletRequest);
+        return postService.deleteComment(id, userName, userRole);
     }
 
 
     private String getUserNameOf(HttpServletRequest httpServletRequest){
         return (String) httpServletRequest.getAttribute("username");
+    }
+
+    private String getUserRoleOf(HttpServletRequest httpServletRequest){
+        return (String) httpServletRequest.getAttribute("userRole");
     }
 
 }

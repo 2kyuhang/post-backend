@@ -1,5 +1,6 @@
 package com.sparta.blog.domain.auth.entity;
 
+import com.sparta.blog.domain.auth.type.UserRole;
 import com.sparta.blog.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,11 +33,7 @@ public class User {
     @Column(updatable = false)
     LocalDateTime createdAt;
 
-
-    public static User of(String username, String password){
-        return User.builder()
-                .username(username)
-                .password(password)
-                .build();
-    }
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    UserRole userRole;
 }
