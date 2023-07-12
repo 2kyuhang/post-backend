@@ -2,8 +2,8 @@ package com.sparta.blog.global.exception;
 
 import com.sparta.blog.global.exception.handler.AuthException;
 
-public class PostUnAuthException extends AuthException {
-    public PostUnAuthException(String msg) {
+public class CommentUnAuthException extends AuthException {
+    public CommentUnAuthException(String msg) {
         super(msg);
     }
 }

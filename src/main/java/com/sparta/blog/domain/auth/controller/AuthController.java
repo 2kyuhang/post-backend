@@ -21,6 +21,7 @@ public class AuthController {
     @PostMapping("/auth/signup")
     public AuthResultDTO signup(@RequestBody AuthRequestDTO authRequestDTO){
         authService.signup(authRequestDTO);
+        System.out.println(authRequestDTO);
 
         return AuthResultDTO
                 .builder()

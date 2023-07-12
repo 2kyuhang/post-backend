@@ -5,6 +5,7 @@ import com.sparta.blog.global.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+
         String url = httpServletRequest.getRequestURI();
 
         if (StringUtils.hasText(url) && url.startsWith("/api/auth")) {
@@ -35,17 +38,24 @@ public class AuthFilter implements Filter {
                 String token = jwtProvider.substringToken(rawToken);
 
                 if(!jwtProvider.validateToken(token)){
-                    throw new IllegalArgumentException("Token Error");
+                    httpServletResponse.setStatus(400);
+                    httpServletResponse.setContentType("text/plain;charset=UTF-8");
+                    httpServletResponse.getWriter().write("토큰이 유효하지 않습니다.");
+                    return;
                 }
 
                 Claims userInfo = jwtProvider.getUserInfoFromToken(token);
                 String userName = userInfo.getSubject();
+                String userRole = (String) userInfo.get(JwtProvider.USER_ROLE_KEY);
 
                 request.setAttribute("username", userName);
+                request.setAttribute("userRole", userRole);
 
                 chain.doFilter(request, response);
             } else {
-                throw new IllegalArgumentException("Not Found Token");
+                httpServletResponse.setStatus(400);
+                httpServletResponse.setContentType("text/plain;charset=UTF-8");
+                httpServletResponse.getWriter().write("토큰이 유효하지 않습니다.");
             }
         }
     }

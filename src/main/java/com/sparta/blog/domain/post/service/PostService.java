@@ -2,11 +2,13 @@ package com.sparta.blog.domain.post.service;
 
 import com.sparta.blog.domain.auth.entity.User;
 import com.sparta.blog.domain.auth.repository.UserRepository;
+import com.sparta.blog.domain.auth.type.UserRole;
 import com.sparta.blog.domain.post.dto.*;
 import com.sparta.blog.domain.post.entity.Comment;
 import com.sparta.blog.domain.post.entity.Post;
 import com.sparta.blog.domain.post.repository.CommentRepository;
 import com.sparta.blog.domain.post.repository.PostRepository;
+import com.sparta.blog.global.exception.CommentUnAuthException;
 import com.sparta.blog.global.exception.PostNotFoundException;
 import com.sparta.blog.global.exception.PostUnAuthException;
 import com.sparta.blog.global.exception.UserNotFoundException;
@@ -43,12 +45,15 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(Long id, String userName, PostRequestDTO postRequestDTO) {
+    public Post updatePost(Long id, String userName, String userRole, PostRequestDTO postRequestDTO) {
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new PostNotFoundException(id)
         );
 
-        validateUser(post, userName);
+        if(!userRole.equals(UserRole.ADMIN.toString())) {
+            validateUser(post, userName);
+        }
+
         post.changeOf(postRequestDTO);
 
         return post;
@@ -56,16 +61,18 @@ public class PostService {
 
     public void validateUser(Post post, String userName){
         if(!post.getUser().getUsername().equals(userName)){
-            throw new PostUnAuthException(post.getId());
+            throw new PostUnAuthException("작성만 글을 삭제/수정할 수 있습니다.");
         }
     }
 
-    public void deletePost(Long id, String userName) {
+    public void deletePost(Long id, String userName, String userRole) {
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new PostNotFoundException(id)
         );
 
-        validateUser(post, userName);
+        if(!userRole.equals(UserRole.ADMIN.toString())) {
+            validateUser(post, userName);
+        }
 
         postRepository.delete(post);
     }
@@ -82,23 +89,25 @@ public class PostService {
 
 
     @Transactional
-    public CommentResponseDTO updateComment(Long id, CommentUpdateRespuestDTO commentUpdateRespuestDTO, String userName) {
+    public CommentResponseDTO updateComment(Long id, CommentUpdateRespuestDTO commentUpdateRespuestDTO, String userName, String userRole) {
         Comment comment = findById(id);
 
-        if(findByCommentByName(userName, comment)){
+        if(userRole.equals(UserRole.ADMIN.toString()) || userName.equals(comment.getUsername())){
             comment.updateContent(commentUpdateRespuestDTO);
+        } else {
+            throw new CommentUnAuthException("작성만 글을 삭제/수정할 수 있습니다.");
         }
 
         return new CommentResponseDTO(comment);
     }
 
-    public PostCommentResultDTO deleteComment(Long id, String userName) {
+    public PostCommentResultDTO deleteComment(Long id, String userName, String userRole) {
         Comment comment = findById(id);
-        if(findByCommentByName(userName, comment)){
+        if(userRole.equals(UserRole.ADMIN.toString()) || userName.equals(comment.getUsername())){
             commentRepository.delete(comment);
-            return new PostCommentResultDTO("댓글 삭제 성공", 200);
+            return new PostCommentResultDTO("댓글 삭제 성공");
         }else {
-            return new PostCommentResultDTO("댓글 삭제 실패", 400);
+            throw new CommentUnAuthException("작성만 글을 삭제/수정할 수 있습니다.");
         }
     }
 
@@ -112,14 +121,6 @@ public class PostService {
     public Comment findById(Long id){
         return commentRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("없는 댓글입니다."));
-    }
-
-    public boolean findByCommentByName(String userName, Comment comment){
-        if(userName.equals(comment.getUsername())){
-            return true;
-        }else {
-            throw new IllegalArgumentException("자신의 댓글이 아닙니다.");
-        }
     }
 
 }

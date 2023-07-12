@@ -5,13 +5,11 @@ import lombok.Getter;
 @Getter
 public class PostCommentResultDTO {
     private String msg;
-    private int statusCode;
 
     public PostCommentResultDTO() {
     }
 
-    public PostCommentResultDTO(String msg, int statusCode) {
+    public PostCommentResultDTO(String msg) {
         this.msg = msg;
-        this.statusCode = statusCode;
     }
 }

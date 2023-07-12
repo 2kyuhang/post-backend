@@ -3,6 +3,7 @@ package com.sparta.blog.domain.auth.service;
 import com.sparta.blog.domain.auth.dto.AuthRequestDTO;
 import com.sparta.blog.domain.auth.entity.User;
 import com.sparta.blog.domain.auth.repository.UserRepository;
+import com.sparta.blog.domain.auth.type.UserRole;
 import com.sparta.blog.global.exception.UserDuplicateException;
 import com.sparta.blog.global.exception.UserNotFoundException;
 import com.sparta.blog.global.jwt.JwtProvider;
@@ -17,14 +18,27 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private static final String ADMIN_TOKEN = "ADMIN_TOKEN";
 
     public void signup(AuthRequestDTO authRequestDTO) {
         String userName = authRequestDTO.getUsername();
         String password = authRequestDTO.getPassword();
+        UserRole userRole = UserRole.USER;
 
         validateUser(userName, password);
 
-        userRepository.save(User.of(userName, passwordEncoder.encode(password)));
+        if(authRequestDTO.isAdmin()){
+            if(!ADMIN_TOKEN.equals(authRequestDTO.getAdminToken())){
+                throw new IllegalArgumentException("Admin Token Not Valid");
+            }
+            userRole = UserRole.ADMIN;
+        }
+
+        userRepository.save(User.builder()
+                .username(userName)
+                .password(passwordEncoder.encode(password))
+                .userRole(userRole)
+                .build());
     }
 
     public String login(AuthRequestDTO authRequestDTO) {
@@ -35,7 +49,7 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtProvider.createToken(user.getUsername());
+        return jwtProvider.createToken(user);
     }
 
 
@@ -58,7 +72,7 @@ public class AuthService {
     }
 
     private boolean validatePassword(String password){
-        return password.matches("[a-zA-Z0-9]{8,15}");
+        return password.matches("[a-zA-Z0-9`~!@#$%^&*()-_=+\\|;:'\",.<>/?]{8,15}");
     }
 
     private boolean checkDupUserName(String userName){
